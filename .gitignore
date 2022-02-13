@@ -1,1 +1,10 @@
 build/
+Debug/
+.project
+.cproject
+imgui.ini
+.polyscope.ini
+.settings/
+*.obj
+*.ply
+*.off
