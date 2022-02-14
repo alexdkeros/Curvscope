@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include "meanCurvature.h"
 
 #include "polyscope/polyscope.h"
@@ -33,6 +35,8 @@ void meanCurvature(std::string meshName, std::vector<glm::vec3>& curvVecs, std::
 		//will make use of it only if voronoi areas are chosen
 		vertexAreasVoronoi.resize(sMesh->nVertices());
 	}
+
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	for (size_t iF=0; iF<sMesh->nFaces();iF++){
 
@@ -89,6 +93,13 @@ void meanCurvature(std::string meshName, std::vector<glm::vec3>& curvVecs, std::
 		meanCurv[iV]=glm::length(curvVecs[iV])/2.0;
 	}
 
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	if (areaVoronoi){
+		std::cout << "Mean Curvature (Voronoi areas) computation time: " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "ms" << std::endl;
+	}else{
+		std::cout << "Mean Curvature (Barycentric areas) computation time: " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << "ms" << std::endl;
+
+	}
 
 }
 
