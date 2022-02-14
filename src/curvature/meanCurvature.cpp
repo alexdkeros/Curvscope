@@ -9,7 +9,7 @@ float cotan(double theta){
 	return (float)std::cos(theta)/std::sin(theta);
 }
 
-void meanCurvature(std::string meshName, std::vector<glm::vec3>& curvVecs, std::vector<double>& meanCurv, bool areaVoronoi){
+void meanCurvature(std::string meshName, std::vector<glm::vec3>& curvVecs, std::vector<double>& meanCurv, std::vector<float>& vertexAreasVoronoi, bool areaVoronoi){
 
 
 	auto sMesh=polyscope::getSurfaceMesh(meshName);
@@ -29,7 +29,6 @@ void meanCurvature(std::string meshName, std::vector<glm::vec3>& curvVecs, std::
 	std::vector<double> faceAreas=sMesh->faceAreas;
 	std::vector<double> vertexAreasBarycentric=sMesh->vertexAreas;
 
-	std::vector<float> vertexAreasVoronoi;
 	if (areaVoronoi){
 		//will make use of it only if voronoi areas are chosen
 		vertexAreasVoronoi.resize(sMesh->nVertices());
@@ -51,7 +50,9 @@ void meanCurvature(std::string meshName, std::vector<glm::vec3>& curvVecs, std::
 			float theta_pC=std::acos(glm::clamp(-1., 1., cos_theta_pC));
 
 			//for the mean curvature normal
-			curvVecs[faces[iF][j]]+=cotan(theta_pB)*(pA-pC)+cotan(theta_pC)*(pA-pB);
+//			curvVecs[faces[iF][j]]+=cotan(theta_pB)*(pA-pC)+cotan(theta_pC)*(pA-pB);
+			curvVecs[faces[iF][j]]+=cotan(theta_pB)*(pC-pA)+cotan(theta_pC)*(pB-pA);
+
 
 			if (areaVoronoi){
 				//use A_mixed area formula from Meyer et al. for normalization
@@ -88,12 +89,23 @@ void meanCurvature(std::string meshName, std::vector<glm::vec3>& curvVecs, std::
 		meanCurv[iV]=glm::length(curvVecs[iV])/2.0;
 	}
 
-	if (areaVoronoi){
-		//additional registrations to debug
-		sMesh->addVertexScalarQuantity("Voronoi area", vertexAreasVoronoi);
-	}
+
 }
 
+void meanCurvatureFlow(std::string meshName, std::vector<glm::vec3>& coords, float factor, bool voronoiAreas){
+
+	auto sMesh=polyscope::getSurfaceMesh(meshName);
+
+	std::vector<glm::vec3> meanCurvVecs(sMesh->nVertices());
+	std::vector<double> meanCurv(sMesh->nVertices());
+	std::vector<float> vertexAreasVoronoi;
+
+	meanCurvature(meshName, meanCurvVecs, meanCurv,vertexAreasVoronoi, voronoiAreas);
+
+	for (size_t iV=0;iV<sMesh->nVertices();iV++){
+			coords[iV]+=meanCurvVecs[iV]*static_cast<float>(sMesh->vertexAreas[iV])*factor;
+	}
+}
 
 
 }

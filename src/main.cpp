@@ -50,11 +50,19 @@ void meanCurvatureVoronoiCallback(){
 			bool voronoiAreas=true;
 			std::vector<glm::vec3> meanCurvVecs(nVertices);
 			std::vector<double> meanCurv(nVertices);
+			std::vector<float> vertexAreasVoronoi;
 
-			curvscope::meanCurvature(s, meanCurvVecs, meanCurv, voronoiAreas);
+
+			curvscope::meanCurvature(s, meanCurvVecs, meanCurv, vertexAreasVoronoi, voronoiAreas);
 			sMesh->addVertexScalarQuantity("Mean curvature (Voronoi areas)", meanCurv);
 			sMesh->addVertexVectorQuantity("Mean curvature vectors (Voronoi areas)", meanCurvVecs);
+
+			if (voronoiAreas){
+				//additional registrations to debug
+				sMesh->addVertexScalarQuantity("Voronoi area", vertexAreasVoronoi);
+			}
 		}
+
 	}
 }
 
@@ -68,16 +76,47 @@ void meanCurvatureBarycentricCallback(){
 					bool voronoiAreas=false;
 					std::vector<glm::vec3> meanCurvVecs(nVertices);
 					std::vector<double> meanCurv(nVertices);
+					std::vector<float> vertexAreasVoronoi;
 
-					curvscope::meanCurvature(s, meanCurvVecs, meanCurv, voronoiAreas);
+
+					curvscope::meanCurvature(s, meanCurvVecs, meanCurv,vertexAreasVoronoi, voronoiAreas);
 					sMesh->addVertexScalarQuantity("Mean curvature (Barycentric areas)", meanCurv);
 					sMesh->addVertexVectorQuantity("Mean curvature vectors (Barycentric areas)", meanCurvVecs);
 					sMesh->addVertexScalarQuantity("Barycentric areas", sMesh->vertexAreas);
-			    	sMesh->addFaceScalarQuantity("Face areas", sMesh->faceAreas);;
+			    	sMesh->addFaceScalarQuantity("Face areas", sMesh->faceAreas);
 				}
 	}
 
 }
+
+
+void meanCurvatureFlowCallback(){
+
+	static float factor=0.1;
+
+	ImGui::Text("Mean curvature flow:");
+	ImGui::InputFloat("factor", &factor);
+	ImGui::SameLine();
+	if (ImGui::Button("Flow")){
+		for (std::string s: availableMeshes){
+
+			bool voronoiAreas=true;
+
+
+			auto sMesh=polyscope::getSurfaceMesh(s);
+			int nVertices=sMesh->nVertices();
+
+			std::vector<glm::vec3> coords(sMesh->vertices);
+			curvscope::meanCurvatureFlow(s, coords, factor, voronoiAreas);
+
+			sMesh->updateVertexPositions(coords);
+			sMesh->computeGeometryData();
+
+		}
+	}
+
+}
+
 
 
 void callback(){
@@ -87,6 +126,8 @@ void callback(){
 	meanCurvatureVoronoiCallback();
 
 	meanCurvatureBarycentricCallback();
+
+	meanCurvatureFlowCallback();
 
 }
 
