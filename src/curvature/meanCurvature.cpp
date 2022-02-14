@@ -65,8 +65,8 @@ void meanCurvature(std::string meshName, std::vector<glm::vec3>& curvVecs, std::
 					}
 				}else{
 					//Non-obtuse, Voronoi appropriate
-					vertexAreasVoronoi[faces[iF][j]]+=(1.0/8.0)*glm::length2(pA-pB)*cotan(theta_pC);
-					vertexAreasVoronoi[faces[iF][j]]+=(1.0/8.0)*glm::length2(pA-pC)*cotan(theta_pB);
+					vertexAreasVoronoi[faces[iF][j]]+=glm::max(0.0,(1.0/8.0)*glm::length2(pA-pB)*cotan(theta_pC));
+					vertexAreasVoronoi[faces[iF][j]]+=glm::max(0.0,(1.0/8.0)*glm::length2(pA-pC)*cotan(theta_pB));
 
 				}
 			}
