@@ -149,7 +149,7 @@ void addMeanCurvatureQuadFitScalar() {
   igl::principal_curvature(meshV,meshF,PD1,PD2,PV1,PV2);
   // mean curvature
   H = 0.5*(PV1+PV2);
-x
+
   polyscope::getSurfaceMesh("input mesh")
       ->addVertexScalarQuantity("mean curvature (QuadFit)", H,
                                 polyscope::DataType::SYMMETRIC);
