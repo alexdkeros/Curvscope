@@ -103,7 +103,7 @@ In the following examples mean curvature is computed with `Mean Curvature (Voron
 |![before cow](doc/images/before_cow.png) |![after cow](doc/images/flowed_cow.png)|
 |![before rabbit](doc/images/rabbit_before.png) |![after rabbit](doc/images/rabbit_after.png)|
 
-#### Comparison with libIGL (and alternative implementation)
+#### Comparison with libIGL (alternative implementation)
 
   An alternative approach would be to use [libIGL](https://libigl.github.io/), a handy geometry processing library. To this end, one only needs to clone the [Polyscope-libIGL project template](https://github.com/nmwsharp/libigl-polyscope-project-template) and add the following functions in `main.cpp`, with their respective callbacks. Examples of these functions are provided in the [libIGL tutorial](https://libigl.github.io/tutorial/#curvature-directions).
   
