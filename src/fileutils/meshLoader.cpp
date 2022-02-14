@@ -1,4 +1,6 @@
+#include <iostream>
 #include <string>
+#include <fstream>
 #include "meshLoader.h"
 #include "polyscope/polyscope.h"
 #include "polyscope/surface_mesh_io.h"
@@ -29,6 +31,7 @@ std::string meshLoader(std::string filename){
 		polyscope::warning("Unknown file type '"+filename.substr(pos)+"' of input file '"+filename+"'");
 		return "";
 	}
+	std::cout<<"nVertices:"<<vertexCoords.size()<<" nFaces:"<<faceIndices.size()<<std::endl;
 
 	std::string meshName=polyscope::guessNiceNameFromPath(filename);
 
@@ -47,8 +50,71 @@ std::string meshLoader(std::string filename){
 	return meshName;
 
 }
+
+
+
+
 void loadPolygonSoup_OFF(std::string filename, std::vector<std::array<double,3>>& vertexCoords, std::vector<std::vector<size_t>>& faceIndices){
-	std::cout<<"INSIDE off loader"<<std::endl;
+
+	vertexCoords.clear();
+	faceIndices.clear();
+
+	// Open the file
+	std::ifstream in(filename);
+	if (!in) throw std::invalid_argument("Could not open mesh file " + filename);
+
+	std::string line;
+	//get first line
+	size_t linecount=0;
+
+	size_t nVertices=0;
+	size_t nFaces=0;
+
+	bool hasHeader=false;
+
+	while (std::getline(in, line)) {
+		 std::stringstream ss(line);
+
+
+		 if (line.at(0)!='#'){
+
+
+			 if (linecount==0 && line.substr(0,3).compare("OFF")==0){
+				 hasHeader=true; //good, it is an OFF file with a header
+			 } else if ((hasHeader==true && linecount==1) || (hasHeader==false && linecount==0)){
+				 ss>>nVertices>>nFaces;
+				 //ignore number of edges
+			 }else{
+
+				 if (nVertices>0){
+					 double v0,v1,v2;
+					 ss>>v0>>v1>>v2;
+
+					 vertexCoords.push_back({{v0,v1,v2}});
+					 nVertices-=1;
+
+				 }else	if (nVertices==0 && vertexCoords.size()>0){//all vertices parsed, proceed to faces
+					 size_t faceSize;
+					 std::vector<size_t> face;
+					 ss>>faceSize;
+
+
+					 for (size_t iF=0;iF<faceSize;iF++){
+						 size_t iFace;
+						 ss>>iFace;
+						 face.push_back(iFace);
+					 }
+
+
+					 faceIndices.push_back(face);
+				 }
+			 }
+
+
+			 linecount++;
+		 }
+	}
+
 }
 
 }
