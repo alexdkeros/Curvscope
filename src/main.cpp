@@ -29,9 +29,11 @@ void meshCallback(){
 
 	if (ImGui::Button("Add")) {
 		std::string s(textBuff);
-		std::string meshName=curvscope::meshLoader(s);
-		if (!meshName.empty()){
-			availableMeshes.push_back(meshName);
+		if (s.size()>0){
+			std::string meshName=curvscope::meshLoader(s);
+			if (!meshName.empty()){
+				availableMeshes.push_back(meshName);
+			}
 		}
 	}
 
