@@ -25,7 +25,7 @@ A mean curvature viewer based on [Polyscope](https://polyscope.run/).
 git clone --recurse-submodules https://github.com/alexdkeros/Curvscope.git
 ```
 
-  To compile the code. from the project's directory run:
+  To compile the code, navigate to the project's directory and run:
   
 ```
 mkdir build
@@ -54,7 +54,7 @@ make
 
   Curvscope only depends on Polyscope, which packages all its source code dependencies with the repository.
 
-  Polyscope is include as a `git submodule`.
+  Polyscope is included as a `git submodule`.
 
 
 ## Showcase
@@ -65,11 +65,11 @@ make
 In the following examples mean curvature is computed with `Mean Curvature (Voronoi areas)`:
 | Model       |   Vizualization | Comments |
 | ----------- |  ----------- | ----------- |
-| plane      |  ![plane curvature](doc/images/plane.png) | Zero mean curvature at non-boundary faces |
-| sphere   | ![sphere curvature](doc/images/sphere_voronoi.png) | (Near-) constant curvature K=1 |
-| torus    | ![torus curvature](doc/images/torus_voronoi.png) | Smoothly decreasing curvature | 
-| spot     | ![spot curvature](doc/images/expanded.png) | Vizualization of mean curvature vectors |
-| happy buddha | ![buddha curvature](doc/images/buddha_voronoi.png) | Big complex mesh |
+| plane      |  ![plane curvature](doc/images/plane.png) | Zero mean curvature at non-boundary vertices. |
+| sphere   | ![sphere curvature](doc/images/sphere_voronoi.png) | (Near-) constant curvature K=1. |
+| torus    | ![torus curvature](doc/images/torus_voronoi.png) | Smoothly decreasing curvature. | 
+| spot     | ![spot curvature](doc/images/mean_curvature_vectors.png) | Vizualization of mean curvature vectors. Unseen vectors may point inwards (for example, at the horns), or have zero magnitude. |
+| happy buddha | ![buddha curvature](doc/images/buddha_voronoi.png) | "Big and complicated" mesh. |
 
 
 #### Voronoi vs barycentric vertex areas
@@ -96,7 +96,7 @@ In the following examples mean curvature is computed with `Mean Curvature (Voron
 
 #### Mean curvature flow
 
-  A very crude implementation of mean curvature flow, according to the computed mean curvature vectors. Unfortunately, when face areas become too small singularities cause them to get deleted.
+  A *very* crude implementation of mean curvature flow, according to the computed mean curvature vectors. Unfortunately, when face areas become too small singularities cause them to get deleted.
 
 | Before | After |
 |--------------------------------|------------------------------------|
