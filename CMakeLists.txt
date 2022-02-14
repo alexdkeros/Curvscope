@@ -78,6 +78,7 @@ add_subdirectory(libs/polyscope)
 # My code
 #####################################################################
 include_directories(src/fileutils)
+include_directories(src/curvature)
 file (GLOB curvesource
 src/fileutils/*.cpp
 src/curvature/*.cpp)

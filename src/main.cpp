@@ -9,6 +9,7 @@
 #include "args/args.hxx"
 
 #include "fileutils/meshLoader.h"
+#include "curvature/meanCurvature.h"
 
 //=========================================================================
 // Global mesh structure tracker (by name)
@@ -27,10 +28,7 @@ void meshCallback(){
 	ImGui::SameLine();
 
 	if (ImGui::Button("Add")) {
-
 		std::string s(textBuff);
-
-
 		std::string meshName=curvscope::meshLoader(s);
 		if (!meshName.empty()){
 			availableMeshes.push_back(meshName);
@@ -40,14 +38,45 @@ void meshCallback(){
 
 }
 
-void normalsCallback(){
 
+
+void meanCurvatureVoronoiCallback(){
+	if (ImGui::Button("Mean Curvature (Voronoi areas)")){
+		for (std::string s: availableMeshes){
+			auto sMesh=polyscope::getSurfaceMesh(s);
+			int nVertices=sMesh->nVertices();
+
+
+			bool voronoiAreas=true;
+			std::vector<glm::vec3> meanCurvVecs(nVertices);
+			std::vector<double> meanCurv(nVertices);
+
+			curvscope::meanCurvature(s, meanCurvVecs, meanCurv, voronoiAreas);
+			sMesh->addVertexScalarQuantity("Mean curvature (Voronoi areas)", meanCurv);
+			sMesh->addVertexVectorQuantity("Mean curvature vectors (Voronoi areas)", meanCurvVecs);
+		}
+	}
 }
 
-void curvatureCallback(){
-	if (ImGui::Button("Curvature")){
+void meanCurvatureBarycentricCallback(){
+	if (ImGui::Button("Mean Curvature (Barycentric areas)")){
+		for (std::string s: availableMeshes){
+					auto sMesh=polyscope::getSurfaceMesh(s);
+					int nVertices=sMesh->nVertices();
 
+
+					bool voronoiAreas=false;
+					std::vector<glm::vec3> meanCurvVecs(nVertices);
+					std::vector<double> meanCurv(nVertices);
+
+					curvscope::meanCurvature(s, meanCurvVecs, meanCurv, voronoiAreas);
+					sMesh->addVertexScalarQuantity("Mean curvature (Barycentric areas)", meanCurv);
+					sMesh->addVertexVectorQuantity("Mean curvature vectors (Barycentric areas)", meanCurvVecs);
+					sMesh->addVertexScalarQuantity("Barycentric areas", sMesh->vertexAreas);
+			    	sMesh->addFaceScalarQuantity("Face areas", sMesh->faceAreas);;
+				}
 	}
+
 }
 
 
@@ -55,7 +84,9 @@ void callback(){
 
 	meshCallback();
 
-	curvatureCallback();
+	meanCurvatureVoronoiCallback();
+
+	meanCurvatureBarycentricCallback();
 
 }
 
@@ -82,10 +113,7 @@ int main(int argc, char** argv){
 
 	//Importing (possible) commandline input meshes
 	for (std::string s : meshFiles){
-
 		std::cout<<"Importing: "<<s<<std::endl;
-
-
 		std::string meshName=curvscope::meshLoader(s);
 		if (!meshName.empty()){
 			availableMeshes.push_back(meshName);

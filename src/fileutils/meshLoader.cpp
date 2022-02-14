@@ -1,5 +1,6 @@
 #include <string>
 #include "meshLoader.h"
+#include "polyscope/polyscope.h"
 #include "polyscope/surface_mesh_io.h"
 #include "polyscope/surface_mesh.h"
 #include "polyscope/messages.h"
@@ -30,7 +31,14 @@ std::string meshLoader(std::string filename){
 	}
 
 	std::string meshName=polyscope::guessNiceNameFromPath(filename);
-	auto sMesh=polyscope::registerSurfaceMesh(meshName, vertexCoords, faceIndices);
+
+	//turn coordinates to glm vectors to aid linear algebraic operations later on
+	std::vector<glm::vec3> vertexCoordsGLM;
+	for (std::array<double,3> v: vertexCoords){
+		vertexCoordsGLM.push_back(glm::vec3{v[0], v[1], v[2]});
+	}
+	auto sMesh=polyscope::registerSurfaceMesh(meshName, vertexCoordsGLM, faceIndices);
+
 	//add the option to show vertex normals
 	sMesh->computeGeometryData();
 	auto vN=sMesh->vertexNormals;

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "polyscope/surface_mesh_io.h"
+#include <vector>
+#include <array>
 
 namespace curvscope{
 

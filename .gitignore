@@ -1,3 +1,4 @@
+*.hide
 build/
 Debug/
 .project
@@ -8,3 +9,4 @@ imgui.ini
 *.obj
 *.ply
 *.off
+*.mtl
